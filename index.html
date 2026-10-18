@@ -112,6 +112,73 @@
     </section>
   </main>
 
+  
+<section class="contact" id="contact">
+  <h2>Get in Touch</h2>
+  <p>Have a question or want to discuss a project? Send me a message.</p>
+
+  <form action="https://api.web3forms.com/submit" method="POST">
+    <input
+      type="hidden"
+      name="access_key"
+      value="2a369da0-6e60-4962-a746-8e5f73c774c7"
+    />
+
+    <input
+      type="hidden"
+      name="subject"
+      value="New message from wristkyion.github.io"
+    />
+
+    <input
+      type="hidden"
+      name="from_name"
+      value="wristkyion Website"
+    />
+
+    <!-- Honeypot anti-spam field -->
+    <input
+      type="checkbox"
+      name="botcheck"
+      style="display: none;"
+      tabindex="-1"
+    />
+
+    <label for="name">Name</label>
+    <input
+      id="name"
+      type="text"
+      name="name"
+      placeholder="Your name"
+      maxlength="100"
+      required
+    />
+
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      name="email"
+      placeholder="you@example.com"
+      maxlength="254"
+      required
+    />
+
+    <label for="message">Message</label>
+    <textarea
+      id="message"
+      name="message"
+      placeholder="Write your message..."
+      maxlength="5000"
+      rows="6"
+      required
+    ></textarea>
+
+    <button type="submit">Send Message</button>
+  </form>
+</section>
+
+
   <footer>
     <p>© <span id="year"></span> wristkyion</p>
     <a href="https://github.com/wristkyion">GitHub ↗</a>
