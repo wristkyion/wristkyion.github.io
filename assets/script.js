@@ -1,6 +1,6 @@
 /* ==========================================================
    wristkyion: main script
-   Renders content from data.js and drives all motion.
+   Renders content from data.js and drives the sliding panels.
    Content changes belong in data.js, not here.
    ========================================================== */
 (() => {
@@ -9,143 +9,153 @@
   const D = window.SITE;
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const put = (sel, html) => { const el = $(sel); if (el) el.innerHTML = html; };
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const fine   = matchMedia("(pointer: fine)").matches;
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-  /* ---------- Render ---------- */
-  function renderSocials() {
-    put("#social-grid", D.socials.map(s =>
-      `<a class="social" href="${s.url}" target="_blank" rel="noopener">${s.name}<span aria-hidden="true">↗</span></a>`
-    ).join(""));
-    put("#footer-socials", D.socials.map(s =>
-      `<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>`
-    ).join(""));
-  }
+  /* ---------- Static blocks ---------- */
+  function renderAbout() {
+    $("#skills").innerHTML = D.skills.map((s, i) => `
+      <div class="skill reveal" style="--d:${i * .08}s">
+        <span class="n">0${i + 1}</span>
+        <h3>${esc(s.title)}</h3>
+        <p>${esc(s.text)}</p>
+      </div>`).join("");
 
-  function renderSkills() {
-    put("#skill-grid", D.skills.map((s, i) => `
-      <div class="skill reveal" style="--d:${i * 0.08}s">
-        <span class="skill-idx">0${i + 1}</span>
-        <h3>${s.title}</h3>
-        <p>${s.text}</p>
-      </div>`).join(""));
-  }
+    $("#socials").innerHTML = D.socials.map(s =>
+      `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join("");
 
-  function renderStore(filter = "all") {
-    const items = D.store.filter(i => filter === "all" || i.type === filter);
-    put("#store-grid", items.map((i, n) => `
-      <article class="store-card ${i.featured ? "featured" : ""}" style="--thumb:${i.thumb};--d:${n * 70}ms">
-        <div class="store-thumb"><span class="thumb-label">${i.type === "game" ? "Game" : "Software"}</span></div>
-        <div class="store-body">
-          <div class="store-meta"><span class="pill">${i.tag}</span><span class="rating">★ ${i.rating.toFixed(1)}</span></div>
-          <h3>${i.title}</h3>
-          <p>${i.desc}</p>
-          <div class="store-foot">
-            <span class="price">${i.price ? "$" + i.price.toFixed(2) : "Free"}</span>
-            <a class="btn btn-primary btn-sm magnetic" href="${i.url}">${i.price ? "Buy" : "Get"}</a>
-          </div>
-        </div>
-      </article>`).join(""));
-    bindMagnetic();
+    $("#footer-socials").innerHTML = D.socials.map(s =>
+      `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("");
   }
 
   const statusLabel = { live: "Live", wip: "In progress", archived: "Archived" };
   function renderProjects() {
-    put("#project-list", D.projects.map((p, n) => `
-      <article class="project reveal" style="--d:${n * 0.08}s">
-        <span class="project-year">${p.year}</span>
-        <div><h3>${p.title}</h3><p>${p.desc}</p></div>
-        <span class="status ${p.status}">${statusLabel[p.status]}</span>
+    $("#project-list").innerHTML = D.projects.map((p, n) => `
+      <article class="project reveal" style="--d:${n * .08}s">
+        <span class="project-year">${esc(p.year)}</span>
+        <div><h3>${esc(p.title)}</h3><p>${esc(p.desc)}</p></div>
+        <span class="status ${esc(p.status)}">${statusLabel[p.status] || esc(p.status)}</span>
         <div class="progress-wrap">
-          <div class="progress" style="--p:${p.progress}%"><i></i></div>
-          <small>${p.progress}%</small>
+          <div class="progress" style="--p:${Number(p.progress)}%"><i></i></div>
+          <small>${Number(p.progress)}%</small>
         </div>
-      </article>`).join(""));
+      </article>`).join("");
   }
 
+  /* ---------- Item templates ---------- */
   const catLabel = { art: "Art", design: "Design", video: "Video", code: "Code" };
-  function renderPortfolio(filter = "all") {
-    const items = D.portfolio.filter(i => filter === "all" || i.cat === filter);
-    put("#pf-grid", items.map((i, n) => `
-      <figure class="pf-item ${i.size || ""}" style="--thumb:${i.thumb};--d:${n * 70}ms">
-        <div class="pf-shade"></div>
-        <figcaption class="pf-info">
-          <small>${catLabel[i.cat]}</small>
-          <h3>${i.title}</h3>
-          <p>${i.desc}</p>
-        </figcaption>
-      </figure>`).join(""));
-  }
+  const empty = () => `<p class="empty">Nothing here yet.</p>`;
 
-  /* ---------- Sliding-pill tabs ---------- */
-  function setupTabs(groupSel, onChange) {
-    const group = $(groupSel);
-    if (!group) return;
-    const btns = $$(".tab", group);
-    const pill = $(".tab-pill", group);
-    const place = btn => {
-      if (!btn) return;
-      pill.style.left  = btn.offsetLeft + "px";
-      pill.style.width = btn.offsetWidth + "px";
+  const storeCard = (item, n) => `
+    <article class="item" style="--thumb:${item.thumb};--d:${n * 70}ms">
+      <div class="item-thumb"><span class="item-tag">${esc(item.tag)}</span></div>
+      <div class="item-body">
+        <h3>${esc(item.title)}</h3>
+        <p>${esc(item.desc)}</p>
+        <div class="item-foot">
+          <span>★ ${Number(item.rating).toFixed(1)} · ${item.price ? "$" + Number(item.price).toFixed(2) : "Free"}</span>
+          <a class="item-cta" href="${esc(item.url)}">${item.price ? "Buy" : "Get"}</a>
+        </div>
+      </div>
+    </article>`;
+
+  const pfCard = (item, n) => `
+    <figure class="pf-item ${esc(item.size || "")}" style="--thumb:${item.thumb};--d:${n * 70}ms">
+      <figcaption class="pf-cap">
+        <small>${esc(catLabel[item.cat] || item.cat)}</small>
+        <h3>${esc(item.title)}</h3>
+        <p>${esc(item.desc)}</p>
+      </figcaption>
+    </figure>`;
+
+  /* ---------- Sweep: one panel per category, slides left/right ---------- */
+  function setupSweep(root, build) {
+    const tabs     = $$(".sweep-tab", root);
+    const ink      = $(".sweep-ink", root);
+    const viewport = $(".sweep-viewport", root);
+    const track    = $(".sweep-track", root);
+    let current    = Math.max(0, tabs.findIndex(t => t.classList.contains("active")));
+
+    // fill each panel with its own items
+    $$(".sweep-panel", root).forEach(panel => {
+      const { html, count } = build(panel.dataset.cat);
+      $("[data-list]", panel).innerHTML = html;
+      $("[data-count]", panel).textContent = count + (count === 1 ? " item" : " items");
+    });
+
+    const placeInk = idx => {
+      const t = tabs[idx];
+      if (!t) return;
+      ink.style.left  = t.offsetLeft + "px";
+      ink.style.width = t.offsetWidth + "px";
     };
-    requestAnimationFrame(() => place($(".tab.active", group)));
-    btns.forEach(b => b.addEventListener("click", () => {
-      btns.forEach(x => { x.classList.remove("active"); x.setAttribute("aria-selected", "false"); });
-      b.classList.add("active");
-      b.setAttribute("aria-selected", "true");
-      place(b);
-      onChange(b.dataset.filter);
+
+    const slideTo = idx => {
+      track.style.transform = `translate3d(${-idx * 100}%,0,0)`;
+    };
+
+    tabs.forEach((tab, idx) => tab.addEventListener("click", () => {
+      if (idx === current) return;
+      // moving to a later tab slides content left; earlier tab slides right
+      const dir = idx > current ? "wipe-left" : "wipe-right";
+      current = idx;
+      tabs.forEach((t, i) => {
+        t.classList.toggle("active", i === idx);
+        t.setAttribute("aria-selected", String(i === idx));
+      });
+      slideTo(idx);
+      placeInk(idx);
+      viewport.classList.remove("wipe-left", "wipe-right");
+      void viewport.offsetWidth;                 // restart the wash animation
+      if (!reduce) viewport.classList.add(dir);
     }));
-    addEventListener("resize", () => place($(".tab.active", group)));
+
+    slideTo(current);
+    placeInk(current);
+    addEventListener("resize", () => placeInk(current));
+    if (document.fonts) document.fonts.ready.then(() => placeInk(current));
   }
 
   /* ---------- Scroll reveal ---------- */
-  const revealIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add("in");
-        revealIO.unobserve(e.target);
-      }
-    });
-  }, { threshold: .15, rootMargin: "0px 0px -6% 0px" });
-
-  function observeReveals() {
-    $$(".reveal:not(.in)").forEach(el => revealIO.observe(el));
-  }
+  const revealIO = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("in");
+      revealIO.unobserve(e.target);
+    }
+  }), { threshold: .15, rootMargin: "0px 0px -6% 0px" });
+  const observeReveals = () => $$(".reveal:not(.in)").forEach(el => revealIO.observe(el));
 
   /* ---------- Active nav link ---------- */
-  const navLinks = $$(".nav-links a");
-  const sectionIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
-    });
-  }, { rootMargin: "-45% 0px -50% 0px" });
+  const navLinks = $$(".menu a");
+  const sectionIO = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+  }), { rootMargin: "-45% 0px -50% 0px" });
   $$("section[id]").forEach(s => sectionIO.observe(s));
 
-  /* ---------- Menu (mobile) ---------- */
-  const nav = $("#nav");
+  /* ---------- Mobile menu ---------- */
+  const menu    = $("#menu");
   const menuBtn = $(".menu-btn");
-  const links = $(".nav-links");
   menuBtn.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
+    const open = menu.classList.toggle("open");
     menuBtn.setAttribute("aria-expanded", String(open));
   });
-  links.addEventListener("click", e => {
-    if (e.target.tagName === "A") {
-      links.classList.remove("open");
+  menu.addEventListener("click", e => {
+    if (e.target.closest("a")) {
+      menu.classList.remove("open");
       menuBtn.setAttribute("aria-expanded", "false");
     }
   });
 
-  /* ---------- Scroll: nav shrink + hero parallax ---------- */
-  const heroVisual = $(".hero-visual");
+  /* ---------- Scroll: topbar state + figure drift ---------- */
+  const topbar = $("#topbar");
+  const figure = $("#figure");
   let ticking = false;
   function onScroll() {
-    nav.classList.toggle("scrolled", scrollY > 40);
-    if (heroVisual && !reduce) {
-      heroVisual.style.transform = `translate3d(0, ${Math.min(scrollY, 900) * 0.12}px, 0)`;
+    topbar.classList.toggle("scrolled", scrollY > 40);
+    if (figure && !reduce) {
+      figure.style.transform = `translate3d(0,${Math.min(scrollY, 800) * .15}px,0)`;
     }
     ticking = false;
   }
@@ -153,65 +163,21 @@
     if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
   }, { passive: true });
 
-  /* ---------- Pointer effects (desktop only) ---------- */
-  const glow = $(".cursor-glow");
-  if (glow && fine && !reduce) {
-    let x = 0, y = 0, tx = 0, ty = 0;
-    addEventListener("pointermove", e => { tx = e.clientX; ty = e.clientY; }, { passive: true });
-    (function loop() {
-      x += (tx - x) * .12;
-      y += (ty - y) * .12;
-      glow.style.transform = `translate(${x - 260}px, ${y - 260}px)`;
-      requestAnimationFrame(loop);
-    })();
-  } else if (glow) {
-    glow.style.display = "none";
-  }
-
-  const card = $(".glass-card");
-  const hero = $(".hero");
-  if (card && hero && fine && !reduce) {
-    hero.addEventListener("pointermove", e => {
-      const r = card.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - .5;
-      const py = (e.clientY - r.top) / r.height - .5;
-      card.style.setProperty("--ry", `${px * 16}deg`);
-      card.style.setProperty("--rx", `${-py * 12}deg`);
-    });
-    hero.addEventListener("pointerleave", () => {
-      card.style.setProperty("--ry", "-8deg");
-      card.style.setProperty("--rx", "4deg");
-    });
-  }
-
-  function bindMagnetic() {
-    if (!fine || reduce) return;
-    $$(".magnetic").forEach(btn => {
-      if (btn.dataset.bound) return;
-      btn.dataset.bound = "1";
-      btn.addEventListener("pointermove", e => {
-        const r = btn.getBoundingClientRect();
-        const x = e.clientX - r.left - r.width / 2;
-        const y = e.clientY - r.top - r.height / 2;
-        btn.style.transform = `translate(${x * .25}px, ${y * .35}px)`;
-      });
-      btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
-    });
-  }
-
   /* ---------- Init ---------- */
-  renderSocials();
-  renderSkills();
-  renderStore();
+  renderAbout();
   renderProjects();
-  renderPortfolio();
 
-  setupTabs("#store-tabs", f => renderStore(f));
-  setupTabs("#pf-tabs",    f => renderPortfolio(f));
+  setupSweep($('[data-sweep="store"]'), cat => {
+    const list = D.store.filter(i => i.type === cat);
+    return { count: list.length, html: list.map(storeCard).join("") || empty() };
+  });
 
-  bindMagnetic();
+  setupSweep($('[data-sweep="portfolio"]'), cat => {
+    const list = D.portfolio.filter(i => i.cat === cat);
+    return { count: list.length, html: list.map(pfCard).join("") || empty() };
+  });
+
   observeReveals();
   onScroll();
-
-  setTimeout(() => hero && hero.classList.add("loaded"), 120);
+  setTimeout(() => $("#top").classList.add("loaded"), 150);
 })();

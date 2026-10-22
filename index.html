@@ -7,64 +7,50 @@
   <meta name="description" content="Kiyo (wristkyion): programmer, artist, designer and video editor." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./assets/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
 
-  <div class="bg" aria-hidden="true">
-    <span class="orb orb-1"></span>
-    <span class="orb orb-2"></span>
-    <span class="orb orb-3"></span>
-    <span class="grid-lines"></span>
-    <span class="cursor-glow"></span>
-  </div>
-
-  <header class="nav-wrap">
-    <nav class="nav" id="nav" aria-label="Main">
-      <a href="#top" class="brand"><span class="brand-mark">w</span>wristkyion</a>
-      <div class="nav-links">
-        <a href="#about-me">About</a>
-        <a href="#software-games">Software/Games</a>
-        <a href="#projects">Projects</a>
-        <a href="#portfolio">Portfolio</a>
-      </div>
-      <button class="menu-btn" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span></button>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#top">wristkyion<span>.</span></a>
+    <nav class="menu" id="menu" aria-label="Main">
+      <a href="#about-me"><i>01</i>About</a>
+      <a href="#software-games"><i>02</i>Software/Games</a>
+      <a href="#projects"><i>03</i>Projects</a>
+      <a href="#portfolio"><i>04</i>Portfolio</a>
     </nav>
+    <button class="menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
   </header>
 
   <main>
 
     <!-- HERO -->
     <section class="hero" id="top">
-      <div class="hero-copy">
-        <p class="eyebrow reveal">Hi, I'm Kiyo. Call me San.</p>
-        <h1 class="display">
-          <span class="line"><span>Code.</span></span>
-          <span class="line"><span>Draw.</span></span>
-          <span class="line"><span>Design.</span></span>
-          <span class="line"><span class="grad-text">Cut.</span></span>
-        </h1>
-        <p class="lead reveal">A multi-talented creator working across programming, art, design and video editing.</p>
-        <div class="cta reveal">
-          <a class="btn btn-primary magnetic" href="#portfolio">See the portfolio <span class="btn-arrow">→</span></a>
-          <a class="btn btn-ghost magnetic" href="#about-me">About me</a>
-        </div>
+      <div class="hero-meta">
+        <span>Kiyo — "San"</span>
+        <span>Programming / Art / Design / Video</span>
+        <span>Vol. 01 — 2026</span>
       </div>
 
-      <div class="hero-visual">
-        <div class="glass-card">
-          <div class="card-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-          <div class="ring-stage">
-            <span class="ring r1"></span>
-            <span class="ring r2"></span>
-            <span class="core">K</span>
-          </div>
-          <div class="chips">
-            <span>Programming</span><span>Art</span><span>Design</span><span>Video</span>
-          </div>
-        </div>
+      <p class="ghost" aria-hidden="true">Kiyo</p>
+      <div class="ring-outline" aria-hidden="true"></div>
+
+      <div class="hero-figure" id="figure">
+        <img src="assets/character.png" alt="Illustration of a shrine maiden with long black hair and a red bow" />
       </div>
+
+      <p class="hero-side">
+        <strong>Hi, I'm Kiyo.</strong>
+        Call me San. A multi-talented creator working across programming, art, design and video editing.
+      </p>
+
+      <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+      <span class="plus" style="top:18%;left:47%" aria-hidden="true">+</span>
+      <span class="plus" style="top:68%;right:6%" aria-hidden="true">+</span>
+
+      <h1 class="hero-title"><span>wristkyion<em>.</em></span></h1>
 
       <div class="marquee" aria-hidden="true">
         <div class="marquee-track">
@@ -76,84 +62,122 @@
 
     <!-- ABOUT ME -->
     <section class="section" id="about-me">
-      <div class="section-head reveal">
-        <span class="num">01</span>
+      <header class="head reveal">
+        <span class="idx">01</span>
         <h2>About Me</h2>
-      </div>
-      <div class="about-grid">
-        <div class="about-text reveal">
-          <p>I'm Kiyo, but you can also call me "San." I'm a multi-talented creator with skills in programming, art, design, and video editing.</p>
-          <p>My expertise in some of these areas is broad rather than deeply specialized, but I have plenty of experience and a solid body of work to show for it.</p>
-          <div class="skill-grid" id="skill-grid"></div>
+        <p>Who's behind the work</p>
+      </header>
+
+      <div class="about">
+        <div class="reveal">
+          <p class="about-lead">I'm Kiyo, but you can call me <em>San.</em></p>
+          <div class="about-body">
+            <p>I'm a multi-talented creator with skills in programming, art, design, and video editing.</p>
+            <p>My expertise in some of these areas is broad rather than deeply specialized, but I have plenty of experience and a solid body of work to show for it.</p>
+          </div>
+          <div class="skills" id="skills"></div>
         </div>
-        <aside class="profile-card reveal" style="--d:.15s">
-          <div class="avatar">K</div>
-          <h3>Kiyo</h3>
-          <p class="handle">@wristkyion · a.k.a. San</p>
-          <div class="social-grid" id="social-grid"></div>
+
+        <aside class="profile reveal" style="--d:.15s">
+          <div class="profile-art"><img src="assets/character.png" alt="" /></div>
+          <div class="profile-info">
+            <h3>Kiyo</h3>
+            <p class="mono">@wristkyion · San</p>
+            <ul class="socials" id="socials"></ul>
+          </div>
         </aside>
       </div>
     </section>
 
-    <!-- SOFTWARE / GAMES (STORE) -->
+    <!-- SOFTWARE / GAMES -->
     <section class="section" id="software-games">
-      <div class="section-head reveal">
-        <span class="num">02</span>
-        <h2>Software / Games</h2>
-        <p>Apps and games I've made, plus reviews on the side.</p>
-      </div>
-      <div class="toolbar reveal">
-        <div class="tabs" id="store-tabs" role="tablist">
-          <span class="tab-pill"></span>
-          <button class="tab active" data-filter="all" role="tab" aria-selected="true">All</button>
-          <button class="tab" data-filter="software" role="tab" aria-selected="false">Software</button>
-          <button class="tab" data-filter="game" role="tab" aria-selected="false">Games</button>
+      <header class="head reveal">
+        <span class="idx">02</span>
+        <h2>Software<span class="slash">/</span>Games</h2>
+        <p>Apps and games I've made.</p>
+      </header>
+
+      <div class="sweep" data-sweep="store">
+        <div class="sweep-tabs" role="tablist">
+          <span class="sweep-ink" aria-hidden="true"></span>
+          <button class="sweep-tab active" role="tab" aria-selected="true">Software <small>01</small></button>
+          <button class="sweep-tab" role="tab" aria-selected="false">Games <small>02</small></button>
+        </div>
+        <div class="sweep-viewport">
+          <div class="sweep-track">
+            <div class="sweep-panel" data-cat="software">
+              <div class="panel-head"><span>Software</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="item-grid" data-list></div></div>
+            </div>
+            <div class="sweep-panel" data-cat="game">
+              <div class="panel-head"><span>Games</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="item-grid" data-list></div></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="store-grid" id="store-grid"></div>
     </section>
 
     <!-- PROJECTS -->
     <section class="section" id="projects">
-      <div class="section-head reveal">
-        <span class="num">03</span>
+      <header class="head reveal">
+        <span class="idx">03</span>
         <h2>Projects</h2>
         <p>Works in progress and things that shipped.</p>
-      </div>
-      <div class="project-list" id="project-list"></div>
+      </header>
+      <div id="project-list"></div>
     </section>
 
     <!-- PORTFOLIO -->
     <section class="section" id="portfolio">
-      <div class="section-head reveal">
-        <span class="num">04</span>
+      <header class="head reveal">
+        <span class="idx">04</span>
         <h2>Portfolio</h2>
-        <p>A collection of creations, designs, art and edits.</p>
-      </div>
-      <div class="toolbar reveal">
-        <div class="tabs" id="pf-tabs" role="tablist">
-          <span class="tab-pill"></span>
-          <button class="tab active" data-filter="all" role="tab" aria-selected="true">All</button>
-          <button class="tab" data-filter="art" role="tab" aria-selected="false">Art</button>
-          <button class="tab" data-filter="design" role="tab" aria-selected="false">Design</button>
-          <button class="tab" data-filter="video" role="tab" aria-selected="false">Video</button>
-          <button class="tab" data-filter="code" role="tab" aria-selected="false">Code</button>
+        <p>Creations, designs, art and edits.</p>
+      </header>
+
+      <div class="sweep" data-sweep="portfolio">
+        <div class="sweep-tabs" role="tablist">
+          <span class="sweep-ink" aria-hidden="true"></span>
+          <button class="sweep-tab active" role="tab" aria-selected="true">Art <small>01</small></button>
+          <button class="sweep-tab" role="tab" aria-selected="false">Design <small>02</small></button>
+          <button class="sweep-tab" role="tab" aria-selected="false">Video <small>03</small></button>
+          <button class="sweep-tab" role="tab" aria-selected="false">Code <small>04</small></button>
+        </div>
+        <div class="sweep-viewport">
+          <div class="sweep-track">
+            <div class="sweep-panel" data-cat="art">
+              <div class="panel-head"><span>Art</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="pf-grid" data-list></div></div>
+            </div>
+            <div class="sweep-panel" data-cat="design">
+              <div class="panel-head"><span>Design</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="pf-grid" data-list></div></div>
+            </div>
+            <div class="sweep-panel" data-cat="video">
+              <div class="panel-head"><span>Video</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="pf-grid" data-list></div></div>
+            </div>
+            <div class="sweep-panel" data-cat="code">
+              <div class="panel-head"><span>Code</span><span data-count></span></div>
+              <div class="panel-scroll"><div class="pf-grid" data-list></div></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="pf-grid" id="pf-grid"></div>
     </section>
 
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      <a href="#top" class="brand"><span class="brand-mark">w</span>wristkyion</a>
-      <div class="footer-links" id="footer-socials"></div>
-      <small>© 2026 Kiyo · wristkyion</small>
+      <div class="footer-big">wristkyion<span>.</span></div>
+      <nav class="footer-links" id="footer-socials" aria-label="Social"></nav>
+      <small>© 2026 Kiyo · Programming — Art — Design — Video</small>
     </div>
   </footer>
 
-  <script src="./assets/data.js"></script>
-  <script src="./assets/script.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/script.js"></script>
 </body>
 </html>
